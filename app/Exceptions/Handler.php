@@ -39,39 +39,49 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $e)
     {
-        // $status = 500;
 
-        // $message = 'Internal Server Error';
+        $status = 500;
 
-        // if ($e instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException) {
-        //     $status = 400;
-        //     $message = 'Sorry, method not allowed';
-        // }
+        $message = 'Internal Server Error';
 
-        // if ($e instanceof \Illuminate\Session\TokenMismatchException) {
-        //     $status = 401;
-        //     $msg = 'Invalid or expired token';
-        // }
+        if ($e instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException) {
+            $status = 400;
+            $message = 'Sorry, method not allowed';
+        }
 
-        // if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
-        //     $status = 404;
-        //     $message = 'Sorry, that resource does not exist';
-        // }
+        if ($e instanceof \Illuminate\Session\TokenMismatchException) {
+            $status = 401;
+            $msg = 'Invalid or expired token';
+        }
 
-        // if ($e instanceof \Prettus\Validator\Exceptions\ValidatorException) {
-        //     $status = 422;
-        //     $message = $e->getMessageBag();
-        // }
+        if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+            $status = 404;
+            $message = 'Sorry, that resource does not exist';
+        }
 
-        // /**
-        //  * response to ajax requests
-        //  */
-        // if($request->ajax()){
-        //     return response()->json([
-        //             'error'=> true, 
-        //             'message' => $message
-        //         ], $status);
-        // }
+        if ($e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+            $status = 404;
+            $message = 'Page not found.';
+        }
+
+        if ($e instanceof \Prettus\Validator\Exceptions\ValidatorException) {
+            $status = 422;
+            $message = $e->getMessageBag();
+        }
+
+        if ($e instanceof \CodeProject\Exceptions\OnlyAjaxRequestsException) {
+             return response('Only allowed ajax requests', 400);
+        }
+
+        /**
+         * response to ajax requests
+         */
+        if($request->ajax()){
+            return response()->json([
+                    'error'=> true, 
+                    'message' => $message
+                ], $status);
+        }
 
         return parent::render($request, $e);
     }

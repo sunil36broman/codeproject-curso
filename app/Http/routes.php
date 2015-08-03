@@ -15,8 +15,22 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/client', 'ClientController@index');
-Route::post('/client', 'ClientController@store');
-Route::get('/client/{id}', 'ClientController@show');
-Route::put('/client/{id}', 'ClientController@update');
-Route::delete('/client/{id}', 'ClientController@destroy');
+Route::group(['middleware' => 'ajax'], function () {
+	Route::get('/client', 'ClientController@index');
+	Route::post('/client', 'ClientController@store');
+	Route::get('/client/{id}', 'ClientController@show');
+	Route::put('/client/{id}', 'ClientController@update');
+	Route::delete('/client/{id}', 'ClientController@destroy');
+
+	Route::get('/project', 'ProjectController@index');
+	Route::post('/project', 'ProjectController@store');
+	Route::get('/project/{id}', 'ProjectController@show');
+	Route::put('/project/{id}', 'ProjectController@update');
+	Route::delete('/project/{id}', 'ProjectController@destroy');
+
+	Route::get('/project/note', 'ProjectNoteController@index');
+	Route::post('/project/note', 'ProjectNoteController@store');
+	Route::get('/project/note/{id}', 'ProjectNoteController@show');
+	Route::put('/project/note/{id}', 'ProjectNoteController@update');
+	Route::delete('/project/note/{id}', 'ProjectNoteController@destroy');
+});

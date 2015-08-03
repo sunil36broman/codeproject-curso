@@ -29,5 +29,6 @@ class Kernel extends HttpKernel
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'guest' => \CodeProject\Http\Middleware\RedirectIfAuthenticated::class,
         'crsf' => \CodeProject\Http\Middleware\VerifyCsrfToken::class,
+        'ajax' => \CodeProject\Http\Middleware\VerifyIsAjax::class,
     ];
 }
