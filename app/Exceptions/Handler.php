@@ -44,45 +44,42 @@ class Handler extends ExceptionHandler
 
         $message = 'Internal Server Error';
 
-        if ($e instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException) {
-            $status = 400;
-            $message = 'Sorry, method not allowed';
-        }
-
         if ($e instanceof \Illuminate\Session\TokenMismatchException) {
             $status = 401;
             $msg = 'Invalid or expired token';
         }
 
-        if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
+        elseif ($e instanceof \League\OAuth2\Server\Exception\AccessDeniedException) {
+            $status = 401;
+            $msg = 'The resource owner or authorization server denied the request.';
+        }
+
+        elseif ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
             $status = 404;
             $message = 'Sorry, that resource does not exist';
         }
 
-        if ($e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+        elseif ($e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
             $status = 404;
             $message = 'Page not found.';
         }
 
-        if ($e instanceof \Prettus\Validator\Exceptions\ValidatorException) {
+        elseif ($e instanceof \Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException) {
+            $status = 400;
+            $message = 'Sorry, method not allowed';
+        }
+
+        elseif ($e instanceof \Prettus\Validator\Exceptions\ValidatorException) {
             $status = 422;
             $message = $e->getMessageBag();
         }
 
-        if ($e instanceof \CodeProject\Exceptions\OnlyAjaxRequestsException) {
-             return response('Only allowed ajax requests', 400);
-        }
+        return response()->json([
+            'error'=> true, 
+            'message' => $message
+            ], $status);
 
-        /**
-         * response to ajax requests
-         */
-        if($request->ajax()){
-            return response()->json([
-                    'error'=> true, 
-                    'message' => $message
-                ], $status);
-        }
 
-        return parent::render($request, $e);
+         // return parent::render($request, $e);
     }
 }

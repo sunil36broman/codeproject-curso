@@ -31,9 +31,9 @@ class ProjectNoteController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index($id)
     {
-        return $this->repository->all();
+        return $this->repository->findByField('project_id', $id);
     }
 
     /**

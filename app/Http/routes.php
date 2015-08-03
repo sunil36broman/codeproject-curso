@@ -15,22 +15,20 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['middleware' => 'ajax'], function () {
-	Route::get('/client', 'ClientController@index');
-	Route::post('/client', 'ClientController@store');
-	Route::get('/client/{id}', 'ClientController@show');
-	Route::put('/client/{id}', 'ClientController@update');
-	Route::delete('/client/{id}', 'ClientController@destroy');
-
-	Route::get('/project', 'ProjectController@index');
-	Route::post('/project', 'ProjectController@store');
-	Route::get('/project/{id}', 'ProjectController@show');
-	Route::put('/project/{id}', 'ProjectController@update');
-	Route::delete('/project/{id}', 'ProjectController@destroy');
-
-	Route::get('/project/note', 'ProjectNoteController@index');
-	Route::post('/project/note', 'ProjectNoteController@store');
-	Route::get('/project/note/{id}', 'ProjectNoteController@show');
-	Route::put('/project/note/{id}', 'ProjectNoteController@update');
-	Route::delete('/project/note/{id}', 'ProjectNoteController@destroy');
+Route::post('oauth/access_token', function() {
+    return Response::json(Authorizer::issueAccessToken());
 });
+
+//Route::group(['middleware' => 'oauth'], function () {
+	Route::resource('client', 'ClientController', ['except' => ['creat', 'edit']]);
+
+	Route::resource('project', 'ProjectController', ['except' => ['creat', 'edit']]);
+
+	Route::group(['prefix' => 'project'], function (){
+		Route::get('{project}/note', 'ProjectNoteController@index');
+		Route::post('{project}/note', 'ProjectNoteController@store');
+		Route::get('{project}/note{note}', 'ProjectNoteController@show');
+		Route::put('note/{note}', 'ProjectNoteController@update');
+		Route::delete('note/{note}', 'ProjectNoteController@destroy');
+	});
+//});
