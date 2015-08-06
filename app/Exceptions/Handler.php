@@ -41,7 +41,6 @@ class Handler extends ExceptionHandler
     {
 
         $status = 500;
-
         $message = 'Internal Server Error';
 
         if ($e instanceof \Illuminate\Session\TokenMismatchException) {
@@ -74,12 +73,18 @@ class Handler extends ExceptionHandler
             $message = $e->getMessageBag();
         }
 
+        else{
+            if(config('app.debug')){
+                $message = $e->getMessage();
+            }
+        }          
+
         return response()->json([
             'error'=> true, 
             'message' => $message
             ], $status);
 
 
-         // return parent::render($request, $e);
+        // return parent::render($request, $e);
     }
 }
