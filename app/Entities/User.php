@@ -34,4 +34,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      * @var array
      */
     protected $hidden = ['password', 'remember_token'];
+
+    /**
+     * Get projects
+     * @return array CodeProject\Entities\ProjectTask
+     */
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'project_members', 'user_id', 'project_id');
+    }
 }

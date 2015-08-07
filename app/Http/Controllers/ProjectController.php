@@ -54,7 +54,11 @@ class ProjectController extends Controller
      * @return Response
      */
     public function show($id)
-    {
+    {       
+        // if($this->checkProjectPermissons($id) == FALSE){
+        //     return ['error' => Access Forbiden];
+        // }
+
        return $this->repository->with(['owner', 'client'])->find($id);
     }
 
@@ -80,4 +84,66 @@ class ProjectController extends Controller
     {
         return ['success' => $this->repository->delete($id)];
     }
+
+    /**
+     * Display a listing of the members from a project.
+     *
+     * @return Response
+     */
+    public function members($id)
+    {
+        return $this->repository->find($id)->members;
+    }
+
+    /**
+     * Display a member from a project
+     *
+     * @return Response
+     */
+    public function member($projectId, $memberId)
+    {
+        return $this->repository->getMember($projectId, $memberId);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  Request  $request
+     * @return Response
+     */
+    public function addMember(Request $request, $projectId)
+    {
+        return ['success' => $this->service->addMember($request->all())];
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  Request  $request
+     * @return Response
+     */
+    public function removeMember($projectId, $memberId)
+    {
+        return ['success' => $this->service->removeMember($projectId, $memberId)];
+    }
+
+    // private function checkProjectOwner($projectId)
+    // {
+    //     $userId = \Autorizer::getResourceOwnerId();
+
+    //     return $this->repository->isOwner($projectId, $userId );
+    // }
+
+    // private function checkProjectMember($projectId)
+    // {
+    //     $userId = \Autorizer::getResourceOwnerId();
+
+    //     return $this->repository->hasMember($projectId, $userId );
+    // }
+
+
+    // private function checkProjectPermissons($projectId)
+    // {
+    //     return (checkProjectOwner($projectId) || checkProjectMember($projectId));
+    // }
 }

@@ -77,14 +77,14 @@ class Handler extends ExceptionHandler
             if(config('app.debug')){
                 $message = $e->getMessage();
             }
-        }          
+        }    
+
+        // return parent::render($request, $e);      
 
         return response()->json([
             'error'=> true, 
             'message' => $message
             ], $status);
-
-
-        // return parent::render($request, $e);
+       
     }
 }

@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Prettus\Repository\Contracts\Transformable;
 use Prettus\Repository\Traits\TransformableTrait;
 
-class ProjectNote extends Model implements Transformable
+class ProjectTask extends Model implements Transformable
 {
-	use TransformableTrait;
+    use TransformableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -16,9 +16,14 @@ class ProjectNote extends Model implements Transformable
      * @var array
      */
     protected $fillable = [
-    	'project_id',
-    	'title',
-    	'note',
+	    'id',
+	    'name',
+	    'project_id', 
+	    'start_date',
+	    'due_date',
+	    'status',
+	    'created_at',
+	    'updated_at',
     ];
 
     /**
@@ -29,4 +34,5 @@ class ProjectNote extends Model implements Transformable
     {
     	return $this->belongsTo(Project::class);
     }
+
 }
