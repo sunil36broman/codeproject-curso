@@ -68,16 +68,19 @@ class Handler extends ExceptionHandler
             $message = 'Sorry, method not allowed';
         }
 
-        elseif ($e instanceof \Prettus\Validator\Exceptions\ValidatorException) {
-            $status = 422;
-            $message = $e->getMessageBag();
+        elseif ($e instanceof \PDOException) {
+            $status = 500;
+            $message = 'Sorry, was not possible to complete the operation. Contact your system administrator';
         }
 
-        else{
-            if(config('app.debug')){
-                $message = $e->getMessage();
-            }
-        }    
+        elseif ($e instanceof \PDOException) {
+            $status = 500;
+            $message = 'Sorry, was not possible to complete the operation. Contact your system administrator';
+        }
+
+        // if(config('app.debug')){
+        //     $message = $e->getMessage();
+        // }
 
         // return parent::render($request, $e);      
 

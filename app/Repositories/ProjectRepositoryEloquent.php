@@ -64,7 +64,7 @@ class ProjectRepositoryEloquent extends BaseRepository implements ProjectReposit
      * Get a member on a project
      * @param int $projectId 
      * @param int $memberId  
-     * @return mixn
+     * @return mix
      */
     public function getMember($projectId, $userId)
     {
