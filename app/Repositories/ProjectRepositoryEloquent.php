@@ -5,6 +5,7 @@ namespace CodeProject\Repositories;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
 use CodeProject\Entities\Project;
+use CodeProject\Presenters\ProjectPresenter;
 
 /**
  * Class ProjectRepositoryEloquent
@@ -20,6 +21,11 @@ class ProjectRepositoryEloquent extends BaseRepository implements ProjectReposit
     public function model()
     {
         return Project::class;
+    }
+
+    public function presenter()
+    {
+        return ProjectPresenter::class;
     }
 
     /**
@@ -38,7 +44,7 @@ class ProjectRepositoryEloquent extends BaseRepository implements ProjectReposit
      */
     public function isOwner($projectId, $userId)
     {
-        if(count($this->findWere(['project_id' => $projectId, 'user_id' => $userId]))){
+        if(count($this->skipPresenter()->findWhere(['id' => $projectId, 'owner_id' => $userId]))){
             return TRUE;
         }
 
@@ -68,7 +74,7 @@ class ProjectRepositoryEloquent extends BaseRepository implements ProjectReposit
      */
     public function getMember($projectId, $userId)
     {
-       $project = $this->find($projectId);
+       $project = $this->skipPresenter()->find($projectId);
 
        foreach ($project->members as $member) {
            if($member->id == $userId){
@@ -87,7 +93,7 @@ class ProjectRepositoryEloquent extends BaseRepository implements ProjectReposit
      */
     public function addMember($projectId ,$userId)
     {
-        $this->find($projectId)->members()->attach($userId); 
+        $this->skipPresenter()->find($projectId)->members()->attach($userId); 
 
         return TRUE;         
     }
@@ -100,7 +106,7 @@ class ProjectRepositoryEloquent extends BaseRepository implements ProjectReposit
      */
     public function removeMember($projectId ,$userId)
     {       
-        $this->find($projectId)->members()->detach($userId); 
+        $this->skipPresenter()->find($projectId)->members()->detach($userId); 
 
         return  TRUE;      
     }

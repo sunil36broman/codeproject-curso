@@ -19,14 +19,13 @@ Route::post('oauth/access_token', function() {
     return Response::json(Authorizer::issueAccessToken());
 });
 
-//Route::group(['middleware' => 'oauth'], function () {
-	Route::resource('client', 'ClientController', ['except' => ['create', 'edit']]);		
+	
+
+Route::group(['middleware' => 'oauth'], function () {		
+	Route::resource('client', 'ClientController', ['except' => ['create', 'edit']]);
 	Route::resource('project', 'ProjectController', ['except' => ['create', 'edit']]);
 	Route::resource('project.note', 'ProjectNoteController', ['except' => ['create', 'edit']]);	
 	Route::resource('project.task', 'ProjectTaskController', ['except' => ['create', 'edit']]);
-
-	Route::get('project/{projectId}/member', 'ProjectController@members');
-	Route::get('project/{projectId}/member/{memberId}', 'ProjectController@member');
-	Route::post('project/{projectId}/member', 'ProjectController@addMember');
-	Route::delete('project/{projectId}/member/{memberId}', 'ProjectController@removeMember');		
-//});
+	Route::resource('project.member', 'ProjectMemberController', ['except' => ['create', 'edit', 'update']]);
+	Route::resource('project.file', 'ProjectFileController', ['except' => ['create', 'edit']]);	
+});

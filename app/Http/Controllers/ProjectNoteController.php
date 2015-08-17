@@ -20,8 +20,14 @@ class ProjectNoteController extends Controller
      */
     protected $service;
 
+    /**
+     * Instantiate a new Controller instance.
+     *
+     * @return void
+     */
     public function __construct(ProjectNoteRepository $repository, ProjectNoteService $service)
     {
+        $this->middleware('project-permission', ['only' => ['show', 'store', 'update', 'destroy']]);
         $this->repository = $repository;
         $this->service = $service;
     }

@@ -27,6 +27,16 @@ class ProjectTask extends Model implements Transformable
     ];
 
     /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'start_date', 
+        'due_date',
+    ];
+
+    /**
      * Get project
      * @return CodeProject\Entities\Project
      */

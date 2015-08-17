@@ -6,6 +6,7 @@ namespace CodeProject\Http\Controllers;
 use Illuminate\Http\Request;
 use CodeProject\Repositories\ProjectRepository;
 use CodeProject\Services\ProjectService;
+use Autorizer;
 
 class ProjectController extends Controller
 {
@@ -20,8 +21,14 @@ class ProjectController extends Controller
      */
     protected $service;
 
+    /**
+     * Instantiate a new Controller instance.
+     *
+     * @return void
+     */
     public function __construct(ProjectRepository $repository, ProjectService $service)
     {
+        $this->middleware('project-permission', ['only' => ['show', 'update', 'destroy']]);
         $this->repository = $repository;
         $this->service = $service;
     }
@@ -55,10 +62,6 @@ class ProjectController extends Controller
      */
     public function show($id)
     {       
-        // if($this->checkProjectPermissons($id) == FALSE){
-        //     return ['error' => Access Forbiden];
-        // }
-
        return $this->repository->with(['owner', 'client'])->find($id);
     }
 
@@ -127,23 +130,23 @@ class ProjectController extends Controller
         return ['success' => $this->service->removeMember($projectId, $memberId)];
     }
 
-    // private function checkProjectOwner($projectId)
-    // {
-    //     $userId = \Autorizer::getResourceOwnerId();
+    private function checkProjectOwner($projectId)
+    {
+        $userId = Autorizer::getResourceOwnerId();
 
-    //     return $this->repository->isOwner($projectId, $userId );
-    // }
+        return $this->repository->isOwner($projectId, $userId );
+    }
 
-    // private function checkProjectMember($projectId)
-    // {
-    //     $userId = \Autorizer::getResourceOwnerId();
+    private function checkProjectMember($projectId)
+    {
+        $userId = Autorizer::getResourceOwnerId();
 
-    //     return $this->repository->hasMember($projectId, $userId );
-    // }
+        return $this->repository->hasMember($projectId, $userId );
+    }
 
 
-    // private function checkProjectPermissons($projectId)
-    // {
-    //     return (checkProjectOwner($projectId) || checkProjectMember($projectId));
-    // }
+    private function checkProjectPermissons($projectId)
+    {
+        return (checkProjectOwner($projectId) || checkProjectMember($projectId));
+    }
 }

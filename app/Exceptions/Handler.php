@@ -73,9 +73,11 @@ class Handler extends ExceptionHandler
             $message = 'Sorry, was not possible to complete the operation. Contact your system administrator';
         }
 
-        // if(config('app.debug')){
-        //     $message = $e->getMessage();
-        // }
+        else{
+            if(config('app.debug')){
+                $message = $e->getMessage();
+            }
+        }
 
         // return parent::render($request, $e);      
 

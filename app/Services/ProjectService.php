@@ -83,7 +83,17 @@ class ProjectService
        	try {
 
        		$this->projectMemberValidator->with( $data )->passesOrFail();
+       		
+
+       		if($this->repository->hasMember($data['project_id'] ,$data['user_id'])){
+       			return [
+					'error'   => true,
+					'message' => "The user is already member of the project"
+				];
+       			//throw new ValidatorException("The user is already member of the project");       			
+       		}
     		
+
 			return $this->repository->addMember($data['project_id'] ,$data['user_id']);
 
 		} catch (ValidatorException $e) {

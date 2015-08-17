@@ -27,6 +27,15 @@ class Project extends Model implements Transformable
     ];
 
     /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'due_date',
+    ];
+
+    /**
      * Get Owner
      * @return CodeProject\Entities\User
      */
@@ -69,5 +78,14 @@ class Project extends Model implements Transformable
     public function tasks()
     {
         return $this->hasMany(ProjectTask::class);
+    }
+
+    /**
+     * Get Files
+     * @return array CodeProject\Entities\ProjectFile
+     */
+    public function files()
+    {
+        return $this->hasMany(ProjectFile::class);
     }
 }

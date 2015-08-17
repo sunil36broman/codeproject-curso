@@ -20,6 +20,11 @@ class ClientController extends Controller
      */
     protected $service;
 
+    /**
+     * Instantiate a new Controller instance.
+     *
+     * @return void
+     */
     public function __construct(ClientRepository $repository, ClientService $service)
     {
         $this->repository = $repository;
