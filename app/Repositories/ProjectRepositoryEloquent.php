@@ -23,6 +23,11 @@ class ProjectRepositoryEloquent extends BaseRepository implements ProjectReposit
         return Project::class;
     }
 
+    /**
+     * Specify Presenter class name
+     *
+     * @return string
+     */
     public function presenter()
     {
         return ProjectPresenter::class;
@@ -37,33 +42,14 @@ class ProjectRepositoryEloquent extends BaseRepository implements ProjectReposit
     }
 
     /**
-     * Check if exists a owner on a project
+     * Get owner on a project
      * @param int $projectId 
      * @param int $memberId  
-     * @return mixn
+     * @return mix
      */
-    public function isOwner($projectId, $userId)
+    public function getOwner($projectId, $userId)
     {
-        if(count($this->skipPresenter()->findWhere(['id' => $projectId, 'owner_id' => $userId]))){
-            return TRUE;
-        }
-
-        return FALSE;
-    }
-
-    /**
-     * Check if exists a member on a project
-     * @param int $projectId 
-     * @param int $memberId  
-     * @return mixn
-     */
-    public function hasMember($projectId, $userId)
-    {
-        if($this->getMember($projectId, $userId) != NULL){
-            return TRUE;
-        }
-
-        return FALSE;
+        return $this->skipPresenter()->findWhere(['id' => $projectId, 'owner_id' => $userId]);
     }
 
     /**
@@ -83,6 +69,17 @@ class ProjectRepositoryEloquent extends BaseRepository implements ProjectReposit
        }
 
         return NULL;
+    }
+
+    /**
+     * Get a member on a project
+     * @param int $projectId 
+     * @param int $memberId  
+     * @return mix
+     */
+    public function getMembers($projectId)
+    {
+       return $this->skipPresenter()->find($projectId)->members;
     }
 
     /**
@@ -109,5 +106,35 @@ class ProjectRepositoryEloquent extends BaseRepository implements ProjectReposit
         $this->skipPresenter()->find($projectId)->members()->detach($userId); 
 
         return  TRUE;      
+    }
+
+    /**
+     * Check if exists a owner on a project
+     * @param int $projectId 
+     * @param int $memberId  
+     * @return mix
+     */
+    public function isOwner($projectId, $userId)
+    {
+        if(count($this->getOwner($projectId, $userId))){
+            return TRUE;
+        }
+
+        return FALSE;
+    }
+
+    /**
+     * Check if exists a member on a project
+     * @param int $projectId 
+     * @param int $memberId  
+     * @return mixn
+     */
+    public function hasMember($projectId, $userId)
+    {
+        if($this->getMember($projectId, $userId) != NULL){
+            return TRUE;
+        }
+
+        return FALSE;
     }
 }

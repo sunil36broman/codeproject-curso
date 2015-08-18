@@ -5,7 +5,15 @@ namespace CodeProject\Http\Controllers;
 use Illuminate\Http\Request;
 use CodeProject\Services\ProjectFileService;
 
-class ProjectFileController extends Controller
+/**
+ * Este controle será temporário, apenas para atender os requisitos do  projeto fase-4. 
+ * Na video aula está de uma forma, na avaliação pediram desta forma =P
+ * 
+ * vamos ver quais rotas irão realmente ser usadas no front, e implemetaremos o metodos 
+ * definitivos no ProjectController
+ */
+
+class FileController extends Controller
 {
     /**
      * @var ProjectRepository
@@ -19,7 +27,6 @@ class ProjectFileController extends Controller
      */
     public function __construct(ProjectFileService $service)
     {
-        $this->middleware('project-permission', ['only' => ['show', 'store','update', 'destroy']]);
         $this->service = $service;
     }
 
@@ -28,9 +35,9 @@ class ProjectFileController extends Controller
      *
      * @return Response
      */
-    public function index($projectId)
+    public function index()
     {
-        return $this->service->getAllByProject($projectId);
+        return $this->service->all();
     }
 
     /**
@@ -39,13 +46,13 @@ class ProjectFileController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function store(Request $request, $projectId)
+    public function store(Request $request)
     {
 
         if (! $request->hasFile('file')) {
             return response()->json([
                 'error'=> true, 
-                'message' => 'the field file is required'
+                'message' => 'the file field is required'
                 ], 422);
         }
 
@@ -59,7 +66,7 @@ class ProjectFileController extends Controller
 
 
         $data = [
-            'project_id' => $projectId,
+            'project_id' => $request->input('project_id'),
             'name' => $request->input('name'),
             'description' => $request->input('description'),
             'file' => $request->file('file'),
@@ -75,7 +82,7 @@ class ProjectFileController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function show($projectId, $fileId)
+    public function show($fileId)
     {
          return $this->service->find($fileId);
     }
@@ -87,7 +94,7 @@ class ProjectFileController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update(Request $request, $projectId, $fileId)
+    public function update(Request $request, $fileId)
     {
         $file = NULL;
         $extension = NULL;
@@ -98,7 +105,7 @@ class ProjectFileController extends Controller
         }
 
         $data = [
-            'project_id' => $projectId,
+            'project_id' => $request->input('project_id'),
             'name' => $request->input('name'),
             'description' => $request->input('description'),
             'file' => $file,
@@ -114,7 +121,7 @@ class ProjectFileController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function destroy($projectId, $fileId)
+    public function destroy($fileId)
     {
        return ['success' => $this->service->delete($fileId)];
     }

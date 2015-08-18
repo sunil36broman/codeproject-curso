@@ -6,7 +6,7 @@ use CodeProject\Repositories\ProjectNoteRepository;
 use CodeProject\Validators\ProjectNoteValidator;
 use \Prettus\Validator\Exceptions\ValidatorException;
 
-class ProjectNoteService
+class ProjectNoteService extends ServiceAbstract
 {
 	/**
 	 * @var ProjectRepository
@@ -23,6 +23,11 @@ class ProjectNoteService
 		$this->repository = $repository;
 		$this->validator = $validator;
 	}
+
+    public function getAllByProject($projectId)
+    {
+        return $this->repository->findWhere(['project_id' => $projectId]);
+    }
 
 	public function create(array $data)
 	{

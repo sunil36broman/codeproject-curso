@@ -2,11 +2,11 @@
 
 namespace CodeProject\Services;
 
-use CodeProject\Repositories\ProjectMemberRepository;
+use CodeProject\Repositories\ProjectRepository;
 use CodeProject\Validators\ProjectMemberValidator;
 use \Prettus\Validator\Exceptions\ValidatorException;
 
-class ProjectMemberService
+class ProjectMemberService extends ServiceAbstract
 {
 	/**
 	 * @var ProjectRepository
@@ -17,29 +17,60 @@ class ProjectMemberService
 	 * @var ProjectValidator
 	 */
 	protected $validator;
-	
-	public function __construct(ProjectMemberRepository $repository, ProjectMemberValidator $validator)
+
+	/**
+	 * Construct a instance of service
+	 * @param ProjectRepository      $repository 
+	 * @param ProjectMemberValidator $validator  
+	 */
+	public function __construct(ProjectRepository $repository, ProjectMemberValidator $validator)
 	{
 		$this->repository = $repository;
 		$this->validator = $validator;
 	}
 
-	public function create(array $data)
-	{
-		
-		try {
+    /**
+     * Get all members from a project
+     * @param  integer $projectId 
+     * @return array Project         
+     */
+    public function getMembers($projectId)
+    {
+        return $this->repository->getMembers($projectId);
+    }
 
-			$this->validator->with( $data )->passesOrFail();
+    /**
+     * Get a member
+     * @param  integer $projectId 
+     * @param  integer $memberId 
+     * @return obj User      
+     */
+    public function getMember($projectId, $memberId)
+    {
+        return $this->repository->getMember($projectId, $memberId);
+    }
 
-			return $this->repository->create( $data );
+    /**
+     * Add a new member on a project
+     * @param int $projectId 
+     * @param int $memberId  
+     * @return mix
+     */
+    public function addMember($data)
+    {
+    	$this->validator->with( $data )->passesOrFail();
 
-		} catch (ValidatorException $e) {
+    	return $this->repository->addMember($data['project_id'] ,$data['user_id']);  	
+    }
 
-			return [
-					'error'   => true,
-					'message' => $e->getMessageBag()
-				];
-		}
-	}
-
+    /**
+     * remove a  member from a project
+     * @param int $projectId 
+     * @param int $memberId  
+     * @return mix
+     */
+    public function removeMember($projectId, $memberId)
+    {
+    	return $this->repository->removeMember($projectId, $memberId);    	
+    }
 }

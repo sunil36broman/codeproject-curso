@@ -73,17 +73,20 @@ class Handler extends ExceptionHandler
             $message = 'Sorry, was not possible to complete the operation. Contact your system administrator';
         }
 
-        else{
+        elseif ($e instanceof \Prettus\Validator\Exceptions\ValidatorException) {
+            $status = 422;
+            $message = $e->getMessageBag();
+        }else{
             if(config('app.debug')){
-                $message = $e->getMessage();
+        //        $message = $e->getMessage();
             }
         }
 
         // return parent::render($request, $e);      
 
         return response()->json([
-            'error'=> true, 
-            'message' => $message
+                'error'=> true, 
+                'message' => $message
             ], $status);
        
     }

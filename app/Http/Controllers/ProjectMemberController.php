@@ -4,19 +4,18 @@ namespace CodeProject\Http\Controllers;
 
 
 use Illuminate\Http\Request;
-use CodeProject\Repositories\ProjectRepository;
-use CodeProject\Services\ProjectService;
+use CodeProject\Services\ProjectMemberService;
 
 class ProjectMemberController extends Controller
 {
 
     /**
-     * @var ProjectRepository
+     * @var ProjectMemberRepository
      */
     protected $repository;
 
     /**
-     * @var ProjectRepository
+     * @var ProjectMemberRepository
      */
     protected $service;
 
@@ -25,10 +24,9 @@ class ProjectMemberController extends Controller
      *
      * @return void
      */
-    public function __construct(ProjectRepository $repository, ProjectService $service)
+    public function __construct(ProjectMemberService $service)
     {
         $this->middleware('project-permission', ['only' => ['show', 'store', 'update', 'destroy']]);
-        $this->repository = $repository;
         $this->service = $service;
     }
 
@@ -37,9 +35,9 @@ class ProjectMemberController extends Controller
      *
      * @return Response
      */
-    public function index($id)
+    public function index($projectId)
     {
-        return $this->repository->find($id)->members;
+        return $this->service->getMembers($projectId);
     }
 
     /**
@@ -49,7 +47,7 @@ class ProjectMemberController extends Controller
      */
     public function show($projectId, $memberId)
     {
-        return $this->repository->getMember($projectId, $memberId);
+        return $this->service->getMember($projectId, $memberId);
     }
 
     /**

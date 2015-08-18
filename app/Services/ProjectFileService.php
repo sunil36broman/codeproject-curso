@@ -4,13 +4,13 @@ namespace CodeProject\Services;
 
 use CodeProject\Repositories\ProjectFileRepository;
 use CodeProject\Validators\ProjectFileValidator;
-use \Prettus\Validator\Exceptions\ValidatorException;
+use Prettus\Validator\Exceptions\ValidatorException;
 use Prettus\Validator\Contracts\ValidatorInterface;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Contracts\Filesystem\Factory as Storage;
 
-class ProjectFileService
+class ProjectFileService extends ServiceAbstract
 {
 	/**
 	 * @var ProjectRepository
@@ -43,66 +43,50 @@ class ProjectFileService
 		$this->storage = $storage;
 	}
 
+    public function getAllByProject($projectId)
+    {
+        return $this->repository->findWhere(['project_id' => $projectId]);
+    }
+
 	public function upload(array $data)
 	{
-		
-		try {
+		$this->validator->with( $data )->passesOrFail(ValidatorInterface::RULE_CREATE );
 
-			$this->validator->with( $data )->passesOrFail(ValidatorInterface::RULE_CREATE );
+		$model = $this->repository->skipPresenter()->create( $data );
 
-			$model = $this->repository->skipPresenter()->create( $data );
+		$this->storage->put($model->id . "." . $data['extension'], $this->fileSystem->get($data['file']));
 
-			$this->storage->put($model->id . "." . $data['extension'], $this->fileSystem->get($data['file']));
-
-			return $model;
-
-		} catch (ValidatorException $e) {
-
-			return [
-					'error'   => true,
-					'message' => $e->getMessageBag()
-				];
-		}
+		return $model;
 	}
 
 	public function update(array $data, $fileId)
 	{
-		
-		try {
+		$this->validator->with( $data )->passesOrFail(ValidatorInterface::RULE_UPDATE );
 
-			$this->validator->with( $data )->passesOrFail(ValidatorInterface::RULE_UPDATE );
+		if($data['file'] != NULL){
+			$this->storage->put($fileId . "." . $data['extension'], $this->fileSystem->get($data['file']));
+		}else{
+			unset($data['file']);
+			unset($data['extension']);
+		}	
 
-			if($data['file'] != NULL){
-				$this->storage->put($fileId . "." . $data['extension'], $this->fileSystem->get($data['file']));
-			}else{
-				unset($data['file']);
-				unset($data['extension']);
-			}	
+		if(empty($data['name'])){
+			unset($data['name']);
+		}	
 
-			if(empty($data['name'])){
-				unset($data['name']);
-			}	
+		if(empty($data['description'])){
+			unset($data['description']);
+		}	
 
-			if(empty($data['description'])){
-				unset($data['description']);
-			}	
-
-			return $this->repository->update($data, $fileId);			
-
-		} catch (ValidatorException $e) {
-
-			return [
-					'error'   => true,
-					'message' => $e->getMessageBag()
-				];
-		}
+		return $this->repository->update($data, $fileId);			
 	}
 
 	public function delete($fileId)
 	{
-
 		$model = $this->repository->skipPresenter()->find($fileId);
+
 		$this->storage->delete($fileId . "." . $model->extension);
+
 		return $this->repository->delete($fileId);
 	}
 }

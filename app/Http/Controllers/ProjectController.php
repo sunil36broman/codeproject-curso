@@ -2,20 +2,11 @@
 
 namespace CodeProject\Http\Controllers;
 
-
 use Illuminate\Http\Request;
-use CodeProject\Repositories\ProjectRepository;
 use CodeProject\Services\ProjectService;
-use Autorizer;
 
 class ProjectController extends Controller
 {
-
-    /**
-     * @var ProjectRepository
-     */
-    protected $repository;
-
     /**
      * @var ProjectRepository
      */
@@ -26,10 +17,9 @@ class ProjectController extends Controller
      *
      * @return void
      */
-    public function __construct(ProjectRepository $repository, ProjectService $service)
+    public function __construct(ProjectService $service)
     {
         $this->middleware('project-permission', ['only' => ['show', 'update', 'destroy']]);
-        $this->repository = $repository;
         $this->service = $service;
     }
 
@@ -40,7 +30,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        return $this->repository->with(['owner', 'client'])->all();
+        return $this->service->all();
     }
 
     /**
@@ -62,7 +52,7 @@ class ProjectController extends Controller
      */
     public function show($id)
     {       
-       return $this->repository->with(['owner', 'client'])->find($id);
+       return $this->service->find($id);
     }
 
     /**
@@ -85,68 +75,6 @@ class ProjectController extends Controller
      */
     public function destroy($id)
     {
-        return ['success' => $this->repository->delete($id)];
-    }
-
-    /**
-     * Display a listing of the members from a project.
-     *
-     * @return Response
-     */
-    public function members($id)
-    {
-        return $this->repository->find($id)->members;
-    }
-
-    /**
-     * Display a member from a project
-     *
-     * @return Response
-     */
-    public function member($projectId, $memberId)
-    {
-        return $this->repository->getMember($projectId, $memberId);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  Request  $request
-     * @return Response
-     */
-    public function addMember(Request $request, $projectId)
-    {
-        return ['success' => $this->service->addMember($request->all())];
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  Request  $request
-     * @return Response
-     */
-    public function removeMember($projectId, $memberId)
-    {
-        return ['success' => $this->service->removeMember($projectId, $memberId)];
-    }
-
-    private function checkProjectOwner($projectId)
-    {
-        $userId = Autorizer::getResourceOwnerId();
-
-        return $this->repository->isOwner($projectId, $userId );
-    }
-
-    private function checkProjectMember($projectId)
-    {
-        $userId = Autorizer::getResourceOwnerId();
-
-        return $this->repository->hasMember($projectId, $userId );
-    }
-
-
-    private function checkProjectPermissons($projectId)
-    {
-        return (checkProjectOwner($projectId) || checkProjectMember($projectId));
+        return ['success' => $this->service->delete($id)];
     }
 }

@@ -2,19 +2,11 @@
 
 namespace CodeProject\Http\Controllers;
 
-
 use Illuminate\Http\Request;
-use CodeProject\Repositories\ProjectNoteRepository;
 use CodeProject\Services\ProjectNoteService;
 
 class ProjectNoteController extends Controller
 {
-
-    /**
-     * @var ProjectRepository
-     */
-    protected $repository;
-
     /**
      * @var ProjectRepository
      */
@@ -25,10 +17,9 @@ class ProjectNoteController extends Controller
      *
      * @return void
      */
-    public function __construct(ProjectNoteRepository $repository, ProjectNoteService $service)
+    public function __construct(ProjectNoteService $service)
     {
         $this->middleware('project-permission', ['only' => ['show', 'store', 'update', 'destroy']]);
-        $this->repository = $repository;
         $this->service = $service;
     }
 
@@ -37,9 +28,9 @@ class ProjectNoteController extends Controller
      *
      * @return Response
      */
-    public function index($id)
+    public function index($projectId)
     {
-        return $this->repository->findWhere(['project_id' => $id]);
+        return $this->service->getAllByProject($projectId);
     }
 
     /**
@@ -61,7 +52,7 @@ class ProjectNoteController extends Controller
      */
     public function show($projectId, $noteId)
     {
-       return $this->repository->findWhere(['project_id' => $projectId, 'id' => $noteId]);
+       return $this->service->find($noteId);
     }
 
     /**
@@ -84,6 +75,6 @@ class ProjectNoteController extends Controller
      */
     public function destroy($projectId, $noteId)
     {
-       return ['success' => $this->repository->delete($noteId)];
+       return ['success' => $this->service->delete($noteId)];
     }
 }
