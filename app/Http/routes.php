@@ -17,9 +17,7 @@ Route::get('/', function () {
 
 Route::post('oauth/access_token', function() {
     return Response::json(Authorizer::issueAccessToken());
-});
-
-	
+});	
 
 Route::group(['middleware' => 'oauth'], function () {		
 	Route::resource('client', 'ClientController', ['except' => ['create', 'edit']]);
@@ -28,7 +26,6 @@ Route::group(['middleware' => 'oauth'], function () {
 	Route::resource('project.task', 'ProjectTaskController', ['except' => ['create', 'edit']]);
 	Route::resource('project.member', 'ProjectMemberController', ['except' => ['create', 'edit', 'update']]);
 	Route::resource('project.file', 'ProjectFileController', ['except' => ['create', 'edit']]);
-
 
 	/**
 	 *  Na video-aula não está assim, mas na hora de avaliar o projeto fase-4 estão usando
