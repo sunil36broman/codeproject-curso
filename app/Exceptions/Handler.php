@@ -78,7 +78,7 @@ class Handler extends ExceptionHandler
             $message = $e->getMessageBag();
         }else{
             if(config('app.debug')){
-        //        $message = $e->getMessage();
+                $message = $e->getMessage();
             }
         }
 
