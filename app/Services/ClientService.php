@@ -23,4 +23,9 @@ class ClientService extends ServiceAbstract
 		$this->repository = $repository;
 		$this->validator = $validator;
 	}
+
+	public function all()
+	{
+		return $this->repository->skipPresenter()->all();
+	}
 }
